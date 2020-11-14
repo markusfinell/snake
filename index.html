@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +8,16 @@
 	<link rel="stylesheet" href="style.css" />
 </head>
 <body>
+	<div id="wrap">
+		<div id="board"></div>
+	</div>
+	<div id="points"></div>
+	<div id="controls">
+		<button data-x="0" data-y="-1" id="up">UP</button>
+		<button data-x="0" data-y="1" id="down">DOWN</button>
+		<button data-x="-1" data-y="0" id="left">LEFT</button>
+		<button data-x="1" data-y="0" id="right">RIGHT</button>
+	</div>
 	<script src="app.js"></script>
 </body>
 </html>
