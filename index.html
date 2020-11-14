@@ -10,14 +10,27 @@
 <body>
 	<div id="wrap">
 		<div id="board"></div>
+		<div id="points"></div>
+		<div id="controls">
+			<button data-x="0" data-y="-1" id="up">UP</button>
+			<button data-x="0" data-y="1" id="down">DOWN</button>
+			<button data-x="-1" data-y="0" id="left">LEFT</button>
+			<button data-x="1" data-y="0" id="right">RIGHT</button>
+		</div>
 	</div>
-	<div id="points"></div>
-	<div id="controls">
-		<button data-x="0" data-y="-1" id="up">UP</button>
-		<button data-x="0" data-y="1" id="down">DOWN</button>
-		<button data-x="-1" data-y="0" id="left">LEFT</button>
-		<button data-x="1" data-y="0" id="right">RIGHT</button>
-	</div>
+
+	<script type="text/template" id="screen-start-template">
+		<h1>Let's play Snake!</h1>
+		<button onclick="play()">Play!</button>
+	</script>
+
+	<script type="text/template" id="screen-game-over-template">
+		<h2>Game over!</h2>
+		<p>You {got} {0} {treats}!</p>
+		<p>Wanna play again?</p>
+		<button onclick="play()">Play!</button>
+	</script>
+	
 	<script src="app.js"></script>
 </body>
 </html>

@@ -10,6 +10,17 @@ body {
 	width: 100%;
 	max-width: 300px;
 	margin: 0 auto 10px;
+	position: relative;
+}
+
+.screen {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #4AEA7F;
+	z-index: 1;
 }
 
 #board {
@@ -44,6 +55,11 @@ body {
 	width: 50%;
 	float: right;
 	position: relative;
+	display: none;
+}
+
+body.is-touch #controls {
+	display: block;
 }
 
 #controls button {

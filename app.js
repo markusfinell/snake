@@ -1,4 +1,5 @@
-
+const body = document.querySelector( 'body' );
+const wrap = document.getElementById( 'wrap' );
 const board = document.getElementById( 'board' );
 const boardWidth = Math.floor( board.getBoundingClientRect().width, 10 );
 const boardHeight = boardWidth;
@@ -19,7 +20,7 @@ for ( let x = 0; x < gridWidth; x++ ) {
 const controls = document.querySelectorAll( '#controls button' );
 
 let snakeHead = [0,0];
-let snake = () => document.getElementsByClassName( 'snake' );
+const snake = () => document.querySelectorAll( '.snake' );
 let snakeDirection = [0,1];
 let moveInterval;
 
@@ -44,6 +45,30 @@ const controlKeys = {
 	ArrowLeft: { x: -1, y: 0 },
 	ArrowRight: { x: 1, y: 0 }
 };
+
+const isTouch = 'ontouchstart' in window;
+
+if ( isTouch ) {
+	body.classList.add( 'is-touch' );
+}
+
+let currentScreen = 'start';
+
+setScreen = ( screen ) => {
+	for ( let el of document.querySelectorAll( '.screen' ) ) {
+		el.remove();
+	}
+	let screenEl = document.createElement( 'div' );
+	let screenTemplate = document.getElementById( 'screen-' + screen + '-template' );
+	screenEl.id = screenTemplate.id.replace( '-template', '' );
+	screenEl.classList.add( 'screen' );
+	screenEl.innerHTML = screenTemplate.innerHTML;
+	wrap.appendChild( screenEl );
+	currentScreen = screen;
+
+	return screenEl;
+};
+setScreen( 'start' );
 
 resetInterval = () => {
 	clearInterval( moveInterval );
@@ -137,19 +162,41 @@ collisionDetected = () => {
 
 gameOver = () => {
 	clearInterval( moveInterval );
-	if ( confirm( 'You got ' + points + ' points! Play again?' ) ) {
+	
+	let gameOverScreen = setScreen( 'game-over' );
+
+	let gotReplace = [
+		'gobbled down',
+		'ate',
+		'got',
+		'munched on'
+	];
+
+	let treatReplace = [
+		'treats',
+		'snacks',
+		'candies',
+		'sweets'
+	];
+	
+	let gotWord = Math.floor( Math.random() * gotReplace.length );
+	let treatWord = Math.floor( Math.random() * treatReplace.length );
+	
+	gameOverScreen.innerHTML = gameOverScreen.innerHTML
+		.replace( '{got}', gotReplace[gotWord] )
+		.replace( '{0}', points )
+		.replace( '{treats}', treatReplace[treatWord] );
+
 		points = 0;
 		snakeHead = [0,0];
 
-		while ( snake().length ) {
-			snake()[0].remove();
+		for ( let bit of snake() ) {
+			bit.remove();
 		}
 
 		moveTreat();
 		snakeDirection = [0,1];
-		drawSnake();
-		play();
-	}
+	
 };
 
 moveSnake = () => {
@@ -163,13 +210,6 @@ moveSnake = () => {
 	}
 };
 
-play = () => {
-	drawSnake();
-	moveTreat();
-	setPoints();
-	resetInterval();
-};
-
 controls.forEach( el => {
 	el.addEventListener( 'click', (e) => {
 		let moveY = +e.target.getAttribute('data-y') || 0;
@@ -179,12 +219,14 @@ controls.forEach( el => {
 	} );
 } );
 
-document.querySelector( 'body' ).addEventListener( 'keydown', e => {
+body.addEventListener( 'keydown', e => {
 	turn( controlKeys[e.key].x, controlKeys[e.key].y );
 } );
 
-play();
-
-// if ( confirm( 'ready?' ) ) {
-// 	play();
-// }
+play = () => {
+	document.getElementById( 'screen-' + currentScreen ).remove();
+	drawSnake();
+	moveTreat();
+	setPoints();
+	resetInterval();
+};
