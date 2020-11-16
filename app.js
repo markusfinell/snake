@@ -1,14 +1,13 @@
 const body = document.querySelector( 'body' );
 const wrap = document.getElementById( 'wrap' );
 const board = document.getElementById( 'board' );
-const boardWidth = Math.floor( board.getBoundingClientRect().width, 10 );
-const boardHeight = boardWidth;
-board.style.width = boardWidth + 'px';
-board.style.height = boardHeight + 'px';
+const boardWidth = board.getBoundingClientRect().width;
+const boardHeight = board.getBoundingClientRect().height;
 
-const gridSize = 10;
-const gridWidth = Math.round(boardWidth / gridSize);
-const gridHeight = Math.round(boardHeight / gridSize);
+const gridSize = Math.floor( boardWidth / 30 );
+const gridWidth = Math.floor( boardWidth / gridSize );
+const gridHeight = Math.floor( boardHeight / gridSize );
+console.log( gridSize, gridWidth, gridHeight );
 const gridArea = gridWidth * gridHeight;
 const grid = [];
 for ( let x = 0; x < gridWidth; x++ ) {
@@ -34,7 +33,6 @@ board.appendChild( treatEl );
 
 let points = 0;
 let newPoint = false;
-const pointsEl = document.getElementById( 'points' );
 
 let playing = false;
 let moveCount = 0;
@@ -76,6 +74,10 @@ resetInterval = () => {
 };
 
 turn = ( x, y ) => {
+	if ( ! playing ) {
+		return;
+	}
+
 	if ( snakeDirection[0] != 0 && y != 0 ) {
 		return;
 	}
@@ -112,12 +114,8 @@ addSnakeBit = () => {
 };
 
 drawTreat = () => {
-	treatEl.style.top = gridSize * treat[0] + 'px';
-	treatEl.style.left = gridSize * treat[1] + 'px';
-};
-
-setPoints = () => {
-	pointsEl.innerHTML = points;
+	treatEl.style.left = gridSize * treat[0] + 'px';
+	treatEl.style.top = gridSize * treat[1] + 'px';
 };
 
 moveTreat = () => {
@@ -150,10 +148,9 @@ collisionDetected = () => {
 		return true;
 	}
 
-	if ( treatEl.id == 't-' + snakeHead[0] + '-' + snakeHead[1] ) {
+	if ( treatEl.id == 't-' + snakeHead[1] + '-' + snakeHead[0] ) {
 		points++;
 		newPoint = true;
-		setPoints();
 		moveTreat();
 	}
 
@@ -162,6 +159,7 @@ collisionDetected = () => {
 
 gameOver = () => {
 	clearInterval( moveInterval );
+	playing = false;
 	
 	let gameOverScreen = setScreen( 'game-over' );
 
@@ -220,13 +218,15 @@ controls.forEach( el => {
 } );
 
 body.addEventListener( 'keydown', e => {
-	turn( controlKeys[e.key].x, controlKeys[e.key].y );
+	if ( e.key in controlKeys ) {
+		turn( controlKeys[e.key].x, controlKeys[e.key].y );
+	}
 } );
 
 play = () => {
+	playing = true;
 	document.getElementById( 'screen-' + currentScreen ).remove();
 	drawSnake();
 	moveTreat();
-	setPoints();
 	resetInterval();
 };
